@@ -84,16 +84,16 @@ O desenvolvimento seguiu princípios fundamentais da Orientação a Objeto e boa
 ### Encapsulamento: 
 Todas as entidades mantêm seus atributos privados e fornecem apenas métodos essenciais para manipulação, garantindo controle sobre regras de negócio.
 
-### Composição
+### Composição:
 Competências fazem parte da estrutura interna do Colaborador, reforçando o conceito de agregado.
 
-### Herança e Polimorfismo
+### Herança e Polimorfismo:
 Eventos de domínio, como Avaliação, são derivados de uma estrutura base (EventoDominio), permitindo extensões futuras.
 
-### Abstrações e Interfaces
+### Abstrações e Interfaces:
 Repositórios e serviços são abstraídos por interfaces, facilitando substituição, testes e evolução do sistema.
 
-### Baixo acoplamento e alta coesão
+### Baixo acoplamento e alta coesão:
 - Cada classe possui uma responsabilidade clara.
 - Dependências são passadas via construtor, reduzindo dependência de implementações concretas.
 
