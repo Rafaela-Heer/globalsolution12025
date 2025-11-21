@@ -20,7 +20,7 @@ public class GestaoService {
         colaboradorRepo.save(c);
     }
 
-    // Novo método: Retorna lista de colaboradores via repositório
+    // Retorna lista de colaboradores via repositório
     public List<Colaborador> getColaboradores() {
         return colaboradorRepo.findAll();
     }

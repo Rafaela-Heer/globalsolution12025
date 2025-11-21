@@ -9,7 +9,6 @@ import java.io.*;
 public class InMemoryTreinamentoRepository implements TreinamentoRepository {
     private Map<String, Treinamento> store = new HashMap<>();
 
-    // Método auxiliar para salvar dados em arquivo (persistência simples)
     private void salvarEmArquivo() {
         try (PrintWriter pw = new PrintWriter(new FileWriter("treinamentos.txt"))) {
             store.values().forEach(t -> {
@@ -20,11 +19,10 @@ public class InMemoryTreinamentoRepository implements TreinamentoRepository {
                 pw.println(t.getId() + "," + t.getNome() + "," + t.getDescricao() + "," + competenciasStr);
             });
         } catch (IOException e) {
-            e.printStackTrace();  // Em produção, use logging
+            e.printStackTrace();
         }
     }
 
-    // Método auxiliar para carregar dados do arquivo
     public void carregarDeArquivo() {
         try (BufferedReader br = new BufferedReader(new FileReader("treinamentos.txt"))) {
             br.lines().forEach(line -> {
@@ -48,14 +46,14 @@ public class InMemoryTreinamentoRepository implements TreinamentoRepository {
                 }
             });
         } catch (IOException e) {
-            // Arquivo pode não existir na primeira execução - ignorar
+            // Arquivo pode não existir na primeira execução (ignorar)
         }
     }
 
     @Override
     public void save(Treinamento treinamento) {
         store.put(treinamento.getId(), treinamento);
-        salvarEmArquivo();  // Persistir após salvar
+        salvarEmArquivo();
     }
 
     @Override
@@ -71,6 +69,6 @@ public class InMemoryTreinamentoRepository implements TreinamentoRepository {
     @Override
     public void delete(String id) {
         store.remove(id);
-        salvarEmArquivo();  // Persistir após deletar
+        salvarEmArquivo();
     }
 }

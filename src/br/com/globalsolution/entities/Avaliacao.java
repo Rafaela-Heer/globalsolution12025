@@ -13,7 +13,7 @@ public class Avaliacao extends EventoDominio {
     }
 
     public void aplicarAvaliacao() {
-        // Regra: Atualizar níveis baseados na nota
+        // Atualiza níveis baseados na nota
         colaborador.getCompetencias().forEach(cn -> {
             int novoNivel = Math.min(10, cn.getNivel() + (nota / 10));
             cn.setNivel(novoNivel);

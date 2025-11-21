@@ -29,7 +29,7 @@ public class ColaboradorPainel extends JPanel {
         add(nomeField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
-        add(new JLabel("<html>Competências (formato:<br>nome:nivel; separados por ';'):</html>"), gbc);
+        add(new JLabel("<html>Competências (formato:<br>nome: nivel; separados por ';'):</html>"), gbc);
         gbc.gridx = 1;
         competenciasArea = new JTextArea(5, 20);
         JScrollPane scroll = new JScrollPane(competenciasArea);
@@ -66,7 +66,7 @@ public class ColaboradorPainel extends JPanel {
                     }
                     colaborador.adicionarCompetencia(new Competencia(nomeComp, ""), nivel);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Formato das competências inválido. Use nome:nivel;", "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Formato das competências inválido. Use nome: nivel;", "Erro", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }

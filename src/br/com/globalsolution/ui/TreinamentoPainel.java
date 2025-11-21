@@ -35,7 +35,7 @@ public class TreinamentoPainel extends JPanel {
         txtDescricao = new JTextField();
         painelCad.add(txtDescricao);
 
-        painelCad.add(new JLabel("Competências (nome:descrição; separado por ';'):"));
+        painelCad.add(new JLabel("Competências (nome: descrição; separado por ';'):"));
         txtCompetencias = new JTextField();
         painelCad.add(txtCompetencias);
 
@@ -74,7 +74,7 @@ public class TreinamentoPainel extends JPanel {
                     if (partes.length == 2) {
                         competencias.add(new Competencia(partes[0].trim(), partes[1].trim()));
                     } else {
-                        JOptionPane.showMessageDialog(this, "Formato de competências inválido. Use nome:descrição;", "Erro", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Formato de competências inválido. Use nome: descrição;", "Erro", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
