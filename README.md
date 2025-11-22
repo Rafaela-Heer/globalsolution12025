@@ -29,74 +29,189 @@ javac -d out -cp src @sources.txt
 ```bash
 java -cp out br.com.globalsolution.ui.MainWindow
 ```
+(Obs:Caso o programa não abra a janela, verifique se a pasta out realmente existe e se não houve erros de compilação.)
+
+---
+## Tutorial exemplo 
+
+1. Em **Colaboradores**, cadastre:
+```
+Rafaela
+Comunicação: 3; Liderança: 2; Java: 4;
+```
+
+2. Em **Treinamentos**, cadastre:
+```
+Comunicação Avançada
+Comunicação: Melhora comunicação;
+```
+
+3. Em **Recomendações**, selecione *Rafaela* → clique em **Gerar Recomendações** → selecione o treinamento → **Completar Treinamento**.
+
+(OBS: Se o nome não aparecer na lista, feche o programa e rode novamente no terminal que atualiza)
+
+4. Em **Relatórios**, clique em **Gerar Relatório** e verá Comunicação aumentar de 3 para 4.
+
+
+---
+---
 # Relatório Técnico
+Implementado em Java + Swing + Domain Driven Design (DDD)
 
-## 1. O domínio escolhido e o problema resolvido
-O domínio Gestão Cognitiva de Talentos, é voltado para apoiar o futuro do trabalho por meio de ferramentas que acompanham e desenvolvem competências profissionais de forma estruturada.
-Atualmente, muitas organizações enfrentam dificuldade em:
-- Identificar lacunas de habilidades entre colaboradores;
-- Indicar treinamentos realmente relevantes;
-- Acompanhar a evolução de competências ao longo do tempo;
-- Consolidar avaliações de desempenho de maneira inteligível.
+## 1. Domínio escolhido e problema resolvido
 
-O sistema desenvolvido aborda esses problemas ao permitir registrar colaboradores, associar competências, cadastrar treinamentos, registrar avaliações e gerar recomendações inteligentes para desenvolvimento contínuo. A solução promove produtividade e aprendizagem contínua, alinhada à human-centric AI.
+O sistema foi desenvolvido no domínio de Gestão Cognitiva de Talentos, alinhado às demandas do futuro do trabalho e ao uso de tecnologia para apoiar o desenvolvimento profissional contínuo.
 
-## 2. Decisões de Modelagem
-### Entidades
- - Colaborador: Representa a pessoa acompanhada pelo sistema. Possui nome, identificador e um conjunto de competências. É o agregado principal responsável por manter regras como evolução de níveis, atualizações por avaliação e registro de treinamentos concluídos;
- - Competência: Modelada como Objeto de Valor por ser imutável e representar um conceito (nome + nível). Ela só muda por eventos e decisões dentro do `Colaborador`;
- - Treinamento: Representa cursos ou atividades que desenvolvem competências específicas. Armazena quais competências impacta e em qual intensidade;
- - Avaliação: Evento que altera o estado do Colaborador. Mantém nota, data e impacto nas competências avaliadas.
-   
-### Agregações e Regras Importantes:
-- O Colaborador é o agregado raiz e controla sua lista de competências;
-- Treinamentos e avaliações nunca alteram dados diretamente; apenas solicitam ao colaborador aplicar suas regras de negócio;
-- Competências são tratadas como Objetos de Valor, garantindo consistência e integridade.
+O problema central envolve a dificuldade das organizações em:
 
-### Serviços de Domínio
-- RecomendacaoService: Analisa as competências de cada colaborador, identifica lacunas e sugere treinamentos que podem melhorar seus níveis.
-Esse serviço opera no domínio, sem depender de interface gráfica ou arquivos externos.
+- Acompanhar competências dos colaboradores;
+- Identificar lacunas de habilidades;
+- Recomendar treinamentos adequados;
+- Monitorar a evolução das competências ao longo do tempo;
+- Consolidar informações de avaliações de desempenho.
+
+A solução implementada permite o cadastro de colaboradores, gerenciamento de competências, criação e consulta de treinamentos, detecção automática de lacunas e recomendações inteligentes com base no perfil de cada colaborador. A arquitetura foi construída segundo princípios de DDD, garantindo coesão, clareza e flexibilidade na evolução do sistema.
+
+---
+
+## 2. Decisões de Modelagem (Entidades, Agregados e Serviços)
+
+A modelagem foi organizada nos seguintes pacotes:
+```
+br.com.globalsolution
+├── application.services
+├── entities
+├── infrastructure.repositories
+├── repositories
+├── services
+└── ui
+```
+
+
+### Entidades do domínio (`entities`)
+
+#### Colaborador
+- Entidade raiz do agregado.
+- Armazena ID, nome e uma lista de competências com seus níveis.
+- Implementa regras internas como adicionar competências, atualizar níveis e aplicar evoluções.
+- Possui a classe interna `CompetenciaNivel`, representando a composição entre competência e nível.
+
+#### Competencia
+- Modelada como Objeto de Valor (Value Object).
+- Imutável e definida por nome e descrição.
+- Igualdade baseada exclusivamente no nome, por meio de `equals` e `hashCode`.
+
+#### Treinamento
+- Entidade representando um curso ou atividade.
+- Contém ID, nome, descrição e lista de competências desenvolvidas.
+- Permite conexão direta com lacunas identificadas no colaborador.
+
+#### Avaliacao
+- Evento de domínio que representa uma avaliação formal do colaborador.
+- Ao ser aplicada, aumenta proporcionalmente os níveis das competências com base na nota.
+
+#### EventoDominio
+- Classe abstrata base para eventos, contendo apenas a data.
+- Projetada para futuras extensões, como novas modalidades de avaliação ou eventos de carreira.
+
+---
+
+### Serviços de Domínio (`services`)
+
+#### RecomendacaoService
+- Serviço responsável por identificar lacunas de competências (nível inferior ao recomendado).
+- Filtra treinamentos que desenvolvem essas competências.
+- Opera exclusivamente no domínio, utilizando repositórios injetados e sem dependências de interface gráfica ou infraestrutura.
+
+---
+
+### Serviços de Aplicação (`application.services`)
+
+#### GestaoService
+- Camada intermediária entre UI e domínio.
+- Centraliza operações como:
+  - cadastro de colaboradores;
+  - cadastro de treinamentos;
+  - conclusão de treinamentos;
+  - obtenção de recomendações;
+  - busca de colaboradores e treinamentos.
+- Mantém a interface desacoplada das regras de negócio.
+
+---
 
 ### Repositórios
-Para manter baixo acoplamento, o domínio utiliza interfaces:
+
+Interfaces do domínio:
+
 - `ColaboradorRepository`
 - `TreinamentoRepository`
-As implementações usam persistência simples via arquivos texto (ex.: `data.txt`, `treinamentos.txt`), simulando armazenamento local sem expor detalhes ao domínio.
 
-## 3. Justificativa para o Design da Interface Swing
-A interface foi desenvolvida utilizando Swing por ser uma tecnologia consolidada, estável e amplamente utilizada em projetos acadêmicos e desktops.
+Implementações concretas:
 
-A UI foi estruturada para facilitar o fluxo de trabalho, utilizando:
-### Organização por abas (JTabbedPane)
-- Colaboradores: cadastro, competências e buscas;
-- Treinamentos: listagem e cadastro;
-- Recomendações: geração de sugestões de treinamentos com base nas lacunas;
-- Relatórios: visão consolidada do desempenho e evolução dos colaboradores.
+- `InMemoryColaboradorRepository`
+- `InMemoryTreinamentoRepository`
 
- ### Decisões de design
- - Componentes padrão (JTable, JTextField, JButton) para clareza e simplicidade;
- - Painéis modulares, mantendo o código organizado e facilitando futuras expansões;
- - Validação básica na própria interface, evitando dados inconsistentes enviados ao domínio.
+Ambas utilizam armazenamento em memória com persistência adicional em arquivos texto (`data.txt` e `treinamentos.txt`).  
+O carregamento e a gravação são automáticos, funcionando como um banco de dados local simplificado sem expor detalhes técnicos ao domínio.
 
-## 4. Boas Práticas de Orientação a Objetos 
-O desenvolvimento seguiu princípios fundamentais da Orientação a Objeto e boas práticas recomendadas em Domain Driven Design.
+---
 
-### Encapsulamento: 
-Todas as entidades mantêm seus atributos privados e fornecem apenas métodos essenciais para manipulação, garantindo controle sobre regras de negócio.
+## 3. Justificativa para o design da interface Swing
 
-### Composição:
-Competências fazem parte da estrutura interna do Colaborador, reforçando o conceito de agregado.
+A interface foi desenvolvida em Swing por ser uma tecnologia consolidada, multiplataforma e adequada ao escopo acadêmico do projeto.
 
-### Herança e Polimorfismo:
-Eventos de domínio, como Avaliação, são derivados de uma estrutura base (EventoDominio), permitindo extensões futuras.
+Toda a interface gráfica está no pacote `ui`, dividida em painéis independentes organizados por abas:
 
-### Abstrações e Interfaces:
-Repositórios e serviços são abstraídos por interfaces, facilitando substituição, testes e evolução do sistema.
+### MainWindow
+- Janela principal da aplicação.
+- Carrega os repositórios, inicializa o serviço de gestão e organiza o sistema por meio de `JTabbedPane`.
 
-### Baixo acoplamento e alta coesão:
-- Cada classe possui uma responsabilidade clara.
-- Dependências são passadas via construtor, reduzindo dependência de implementações concretas.
+### ColaboradorPainel
+- Permite cadastrar colaboradores e suas competências.
+- Realiza validação da entrada e apresenta mensagens de feedback ao usuário.
 
+### TreinamentoPainel
+- Responsável pelo cadastro e exibição de treinamentos.
+- Utiliza `JTable` para melhorar a navegação e visualização.
+
+### RecomendacaoPainel
+- Exibe colaboradores cadastrados.
+- Gera recomendações personalizadas.
+- Permite concluir treinamentos e atualizar automaticamente os níveis de competência.
+
+### RelatorioPainel
+- Gera um relatório textual consolidado com colaboradores e suas competências.
+
+### Decisões de design
+- Uso de `GridBagLayout` e `BorderLayout` para disposição organizada dos elementos.
+- Componentes nativos do Swing garantindo simplicidade e compatibilidade.
+- Painéis independentes facilitam manutenção, testes e expansão futura.
+  
+---
+
+## 4. Boas práticas de Orientação a Objetos aplicadas
+
+### Encapsulamento
+- Entidades mantêm atributos privados e expõem apenas métodos essenciais.
+- Regras de negócio permanecem no domínio, não na interface.
+
+### Composição
+- O `Colaborador` agrega `CompetenciaNivel`, reforçando o conceito de agregado.
+- Treinamentos agregam competências desenvolvidas.
+
+### Herança e Polimorfismo
+- `Avaliacao` herda de `EventoDominio`, facilitando a criação de novos eventos.
+
+### Abstração e Interfaces
+- Repositórios e serviços seguem interfaces, permitindo testes, troca de implementações e redução de acoplamento.
+
+### Baixo acoplamento e alta coesão
+- A interface utiliza somente o `GestaoService`.
+- Domínio não depende de infraestrutura.
+- Cada classe tem responsabilidade única.
+
+### Persistência isolada
+- A leitura e gravação de arquivos de texto estão encapsuladas nos repositórios da camada de infraestrutura.
 
 ## Integrantes:
 - **Rafaela Heer Robinson** - 560249
