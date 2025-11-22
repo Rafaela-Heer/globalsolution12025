@@ -15,8 +15,15 @@ public class Colaborador {
     }
 
     public void adicionarCompetencia(Competencia competencia, int nivel) {
+        for (CompetenciaNivel cn : competencias) {
+            if (cn.getCompetencia().equals(competencia)) {
+                cn.setNivel(Math.max(cn.getNivel(), nivel));
+                return;
+            }
+        }
         competencias.add(new CompetenciaNivel(competencia, nivel));
     }
+
 
     public void atualizarNivel(Competencia competencia, int novoNivel) {
         competencias.stream()

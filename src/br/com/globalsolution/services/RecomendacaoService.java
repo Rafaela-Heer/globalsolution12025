@@ -3,6 +3,8 @@ package br.com.globalsolution.services;
 import br.com.globalsolution.entities.*;
 import br.com.globalsolution.repositories.ColaboradorRepository;
 import br.com.globalsolution.repositories.TreinamentoRepository;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,9 @@ public class RecomendacaoService {
 
     public List<Treinamento> recomendarTreinamentos(String colaboradorId) {
         Colaborador c = colaboradorRepo.findById(colaboradorId);
+        if (c == null) {
+            return List.of();
+        }
         List<Competencia> lacunas = c.getCompetencias().stream()
                 .filter(cn -> cn.getNivel() < 5)
                 .map(Colaborador.CompetenciaNivel::getCompetencia)

@@ -64,6 +64,10 @@ public class ColaboradorPainel extends JPanel {
                         JOptionPane.showMessageDialog(this, "Nível deve ser número inteiro", "Erro", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
+                    if (nivel < 1 || nivel > 10) {
+                        JOptionPane.showMessageDialog(this, "Nível deve ser entre 1 e 10.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                     colaborador.adicionarCompetencia(new Competencia(nomeComp, ""), nivel);
                 } else {
                     JOptionPane.showMessageDialog(this, "Formato das competências inválido. Use nome: nivel;", "Erro", JOptionPane.ERROR_MESSAGE);

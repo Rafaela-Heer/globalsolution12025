@@ -20,7 +20,36 @@ public class GestaoService {
         colaboradorRepo.save(c);
     }
 
-    // Retorna lista de colaboradores via repositório
+    public void completarTreinamento(String colaboradorId, String treinamentoId) {
+        Colaborador colaborador = colaboradorRepo.findById(colaboradorId);
+        Treinamento treinamento = treinamentoRepo.findById(treinamentoId);
+
+        if (colaborador != null && treinamento != null) {
+
+            treinamento.getCompetenciasDesenvolvidas().forEach(compTreinamento -> {
+
+                boolean encontrada = false;
+
+                for (Colaborador.CompetenciaNivel cn : colaborador.getCompetencias()) {
+                    if (cn.getCompetencia().equals(compTreinamento)) {
+                        cn.setNivel(Math.min(10, cn.getNivel() + 1));
+                        encontrada = true;
+                        break;
+                    }
+                }
+
+                if (!encontrada) {
+                    colaborador.adicionarCompetencia(compTreinamento, 1);
+                }
+
+            });
+
+            colaboradorRepo.save(colaborador);
+        }
+    }
+
+
+
     public List<Colaborador> getColaboradores() {
         return colaboradorRepo.findAll();
     }
@@ -35,5 +64,7 @@ public class GestaoService {
     public List<Treinamento> getTreinamentos() {
         return treinamentoRepo.findAll();
     }
+
+
 
 }

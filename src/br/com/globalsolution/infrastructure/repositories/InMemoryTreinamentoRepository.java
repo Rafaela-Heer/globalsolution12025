@@ -7,7 +7,8 @@ import java.io.*;
         import java.util.*;
 
 public class InMemoryTreinamentoRepository implements TreinamentoRepository {
-    private Map<String, Treinamento> store = new HashMap<>();
+    private final Map<String, Treinamento> store = Collections.synchronizedMap(new HashMap<>());
+
 
     private void salvarEmArquivo() {
         try (PrintWriter pw = new PrintWriter(new FileWriter("treinamentos.txt"))) {
@@ -46,7 +47,7 @@ public class InMemoryTreinamentoRepository implements TreinamentoRepository {
                 }
             });
         } catch (IOException e) {
-            // Arquivo pode não existir na primeira execução (ignorar)
+            e.printStackTrace(); // ou use logger
         }
     }
 
