@@ -47,7 +47,7 @@ public class RecomendacaoPainel extends JPanel {
         add(new JScrollPane(recomendacaoList), gbc);
 
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
-        completarBtn = new JButton("Completar Treinamento Selecionado");
+        completarBtn = new JButton("Completar Treinamento");
         completarBtn.addActionListener(e -> completarTreinamento());
         add(completarBtn, gbc);
 
